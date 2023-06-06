@@ -1,9 +1,16 @@
 class Game
   attr_gtk
 
+  FLOOR_Y=20
+
   def tick
+    advance_feet
     process_inputs
     render
+  end
+
+  def advance_feet
+    feet.each_foot { |foot| foot.advance }
   end
 
   def process_inputs

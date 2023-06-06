@@ -11,7 +11,7 @@ class Player
 
   def defaults!
     self.x = 400
-    self.y = 20
+    self.y = Game::FLOOR_Y
     self.h = 60
     self.w = 60
     self.facing = :left
