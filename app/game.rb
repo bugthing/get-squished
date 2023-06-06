@@ -1,20 +1,26 @@
 class Game
   attr_gtk
 
-  FLOOR_Y=20
+  FLOOR_Y = 20
 
   def tick
-    advance_feet
     process_inputs
+    advance_feet
     render
-  end
-
-  def advance_feet
-    feet.each_foot { |foot| foot.advance }
   end
 
   def process_inputs
     process_move
+  end
+
+  def advance_feet
+    feet.each_foot do |foot|
+      foot.advance
+
+      if player.intersect_rect?(foot)
+        player.squished
+      end
+    end
   end
 
   def render

@@ -2,12 +2,11 @@ class Player
   extend Delegate
   def initialize(entity)
     self.entity = entity
-    self.path = "sprites/bunny.png"
   end
 
-  attr_accessor :entity, :path
+  attr_accessor :entity
 
-  delegate :x, :y, :h, :w, :facing, to: :entity
+  delegate :x, :y, :h, :w, :path, :facing, :dead, :intersect_rect?, to: :entity
 
   def defaults!
     self.x = 400
@@ -15,6 +14,8 @@ class Player
     self.h = 60
     self.w = 60
     self.facing = :left
+    self.dead = false
+    self.path = "sprites/bunny.png"
   end
 
   def to_sprite
@@ -40,5 +41,10 @@ class Player
   def move_right
     self.x = x + 3
     self.facing = :right
+  end
+
+  def squished
+    self.dead = true
+    self.path = "sprites/blood.png"
   end
 end

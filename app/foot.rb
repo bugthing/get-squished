@@ -1,7 +1,7 @@
 class Foot
   extend Delegate
 
-  ROOF_Y=620
+  ROOF_Y = 620
 
   def initialize(entity)
     self.entity = entity
