@@ -56,6 +56,7 @@ class Game
   # ── Playing state ─────────────────────────────────────────────
 
   def start_game
+    state.new_high_score = false
     state.game_state       = :playing
     state.score_start_tick = tick_count
     state.player           = nil
@@ -135,6 +136,7 @@ class Game
     outputs.sounds << "sounds/game_over.wav" if file_exists?("sounds/game_over.wav")
     if state.final_score > (state.high_score || 0)
       state.high_score = state.final_score
+      state.new_high_score = true
       $gtk.write_file("high_score.txt", state.final_score.to_s)
       outputs.sounds << "sounds/high_score.wav" if file_exists?("sounds/high_score.wav")
     end
@@ -152,7 +154,7 @@ class Game
                         size_enum: 4, alignment_enum: 1, r: 220, g: 180, b: 180 }
     outputs.labels << { x: 640, y: 430, text: "Best: #{state.high_score}s",
                         size_enum: 4, alignment_enum: 1, r: 220, g: 180, b: 180 }
-    if state.final_score && state.final_score >= state.high_score
+    if state.new_high_score
       pulse = ((Math.sin(tick_count * 0.15) + 1) * 127).to_i + 128
       outputs.labels << { x: 640, y: 380, text: "NEW HIGH SCORE!",
                           size_enum: 5, alignment_enum: 1, r: 255, g: 220, b: 0, a: pulse }
