@@ -59,6 +59,10 @@ class Player
     self.walk_frame = 0
   end
 
+  def hitbox
+    { x: x + 12, y: y + 5, w: 36, h: 48 }
+  end
+
   def squished
     self.dead = true
     self.path = "sprites/blood.png"

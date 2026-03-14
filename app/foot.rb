@@ -20,7 +20,7 @@ class Foot
     self.w          = 100
     self.facing     = rand < 0.5 ? :right : :left
     self.direction  = :down
-    self.speed      = rand(20) + 1
+    self.speed      = rand(4) + 1
     self.slow_timer  = 0
     self.slow_amount = 1.0
   end
@@ -33,13 +33,25 @@ class Foot
     elsif direction == :down
       self.y = y - effective
     end
-    self.direction = :up   if y < Game::FLOOR_Y
-    self.direction = :down if y > ROOF_Y
+    self.direction = :up if y < Game::FLOOR_Y
+    if y > ROOF_Y
+      self.direction = :down
+      self.x         = 50 + rand(1130)
+      self.facing    = rand < 0.5 ? :right : :left
+    end
+  end
+
+  def score_value(score_seconds)
+    (speed * (1.0 + score_seconds / 45.0)).ceil
   end
 
   def slow!(multiplier)
     self.slow_amount = multiplier
     self.slow_timer  = 180  # 3 seconds at 60fps
+  end
+
+  def hitbox
+    { x: x + 20, y: y, w: 60, h: 35 }
   end
 
   def to_sprite(sx = 0, sy = 0)

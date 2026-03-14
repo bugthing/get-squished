@@ -21,7 +21,7 @@ class Feet
       foot   = Foot.new(entity)
       last   = Foot.new(state.feet.last)
       foot.defaults!(right_of: last)
-      state.feet << entity
+      state.feet = state.feet + [entity]
     end
   end
 
