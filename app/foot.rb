@@ -42,6 +42,10 @@ class Foot
     self.slow_timer  = 180  # 3 seconds at 60fps
   end
 
+  def hitbox
+    { x: x + 20, y: y, w: 60, h: 35 }
+  end
+
   def to_sprite(sx = 0, sy = 0)
     {
       x: x + sx,

@@ -261,7 +261,7 @@ class Game
         spawn_stomp_particles(foot.x, FLOOR_Y)
         outputs.sounds << "sounds/thud.wav" if file_exists?("sounds/thud.wav")
       end
-      if player.intersect_rect?(foot)
+      if player.hitbox.intersect_rect?(foot.hitbox)
         player.squished
         state.shake_frames = 20
         outputs.sounds << "sounds/squish.wav" if file_exists?("sounds/squish.wav")
