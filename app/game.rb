@@ -84,7 +84,14 @@ class Game
     sy = state.shake_frames > 0 ? rand(11) - 5 : 0
 
     render_background
-    feet.each_foot { |foot| outputs.sprites << foot.to_sprite(sx, sy) }
+    feet.each_foot do |foot|
+      leg_w = 32
+      leg_x = foot.x + (foot.facing == :left ? 1 : 62)
+      leg_y = foot.y + foot.h - 20
+      leg_h = [720 - leg_y, 0].max
+      outputs.solids << { x: leg_x + sx, y: leg_y + sy, w: leg_w, h: leg_h, r: 240, g: 185, b: 145 }
+      outputs.sprites << foot.to_sprite(sx, sy)
+    end
     render_balloons(sx, sy)
     render_particles(sx, sy)
     outputs.sprites << player.to_sprite(sx, sy)
