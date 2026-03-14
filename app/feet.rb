@@ -1,6 +1,6 @@
 class Feet
   FOOT_COUNT   = 3
-  MAX_FEET     = 7
+  MAX_FEET     = 20
   SPAWN_EVERY  = 20  # seconds
 
   def initialize(state)
