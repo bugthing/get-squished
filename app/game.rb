@@ -20,11 +20,15 @@ class Game
 
   # ── State defaults ────────────────────────────────────────────
 
+  MUSIC_CHECKBOX = { x: 570, y: 395, w: 24, h: 24 }
+
   def defaults
     if state.game_state.nil?
-      state.game_state = :title
-      saved = $gtk.read_file("high_score.txt")
-      state.high_score = saved ? saved.to_i : 0
+      state.game_state   = :title
+      saved              = $gtk.read_file("high_score.txt")
+      state.high_score   = saved ? saved.to_i : 0
+      music_pref         = $gtk.read_file("music_pref.txt")
+      state.music_enabled = music_pref ? music_pref == "1" : true
     end
   end
 
@@ -37,7 +41,18 @@ class Game
               inputs.keyboard.key_down.down  ||
               inputs.keyboard.key_down.left  ||
               inputs.keyboard.key_down.right
-    start_game if any_key || inputs.mouse.click
+    if inputs.mouse.click
+      mx = inputs.mouse.click.x
+      my = inputs.mouse.click.y
+      if mx.between?(MUSIC_CHECKBOX[:x], MUSIC_CHECKBOX[:x] + MUSIC_CHECKBOX[:w]) &&
+         my.between?(MUSIC_CHECKBOX[:y], MUSIC_CHECKBOX[:y] + MUSIC_CHECKBOX[:h])
+        state.music_enabled = !state.music_enabled
+        $gtk.write_file("music_pref.txt", state.music_enabled ? "1" : "0")
+      else
+        start_game
+      end
+    end
+    start_game if any_key
   end
 
   def render_title
@@ -53,6 +68,13 @@ class Game
     alpha = ((Math.sin(tick_count * 0.08) + 1) * 127).to_i
     outputs.labels << { x: 640, y: 460, text: "Press any key to start",
                         size_enum: 2, alignment_enum: 1, r: 40, g: 40, b: 80, a: alpha }
+    cb = MUSIC_CHECKBOX
+    outputs.borders << { x: cb[:x], y: cb[:y], w: cb[:w], h: cb[:h], r: 40, g: 40, b: 80 }
+    if state.music_enabled
+      outputs.solids << { x: cb[:x] + 4, y: cb[:y] + 4, w: 16, h: 16, r: 40, g: 40, b: 80 }
+    end
+    outputs.labels << { x: cb[:x] + 32, y: cb[:y] + 20, text: "Music",
+                        size_enum: 2, r: 40, g: 40, b: 80 }
   end
 
   # ── Playing state ─────────────────────────────────────────────
@@ -69,7 +91,9 @@ class Game
     state.balloon_count    = 3
     state.balloon_refill_timer = 0
     state.score                = 0
-    audio[:music] = { input: "sounds/music.ogg", looping: true } if file_exists?("sounds/music.ogg")
+    if state.music_enabled && file_exists?("sounds/music.ogg")
+      audio[:music] = { input: "sounds/music.ogg", looping: true }
+    end
   end
 
   def tick_playing
