@@ -20,7 +20,7 @@ class Foot
     self.w          = 100
     self.facing     = rand < 0.5 ? :right : :left
     self.direction  = :down
-    self.speed      = rand(20) + 1
+    self.speed      = rand(4) + 1
     self.slow_timer  = 0
     self.slow_amount = 1.0
   end
