@@ -41,8 +41,10 @@ class Game
   end
 
   def render_title
-    outputs.solids << { x: 0, y: 0, w: 1280, h: 720, r: 100, g: 180, b: 220 }
-    bob_y = 300 + (Math.sin(tick_count * 0.05) * 20).to_i
+    outputs.solids << { x: 0, y: 40, w: 1280, h: 680, r: 135, g: 206, b: 235 }
+    outputs.solids << { x: 0, y: 0, w: 1280, h: 40, r: 80, g: 160, b: 50 }
+    outputs.solids << { x: 0, y: 36, w: 1280, h: 4, r: 55, g: 120, b: 30 }
+    bob_y = 60 + (Math.sin(tick_count * 0.05) * 10).to_i
     outputs.sprites << { x: 580, y: bob_y, w: 80, h: 80, path: "sprites/bunny.png" }
     outputs.labels << { x: 640, y: 620, text: "GET SQUISHED!", size_enum: 10,
                         alignment_enum: 1, r: 255, g: 80, b: 80 }
@@ -101,11 +103,16 @@ class Game
   end
 
   def render_background
+    # Sky shifts from sunny blue to stormy grey/dark as difficulty rises
     t = [score_seconds / 120.0, 1.0].min
-    r = (100 + (155 * t)).to_i
-    g = (180 - (160 * t)).to_i
-    b = (220 - (200 * t)).to_i
-    outputs.solids << { x: 0, y: 0, w: 1280, h: 720, r: r, g: g, b: b }
+    outputs.solids << { x: 0, y: 40, w: 1280, h: 680,
+                        r: (135 - 100 * t).to_i,
+                        g: (206 - 120 * t).to_i,
+                        b: (235 - 80 * t).to_i }
+    # Grass strip
+    outputs.solids << { x: 0, y: 0, w: 1280, h: 40, r: 80, g: 160, b: 50 }
+    # Darker grass edge
+    outputs.solids << { x: 0, y: 36, w: 1280, h: 4, r: 55, g: 120, b: 30 }
   end
 
   def render_balloons(sx, sy)
