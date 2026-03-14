@@ -33,8 +33,16 @@ class Foot
     elsif direction == :down
       self.y = y - effective
     end
-    self.direction = :up   if y < Game::FLOOR_Y
-    self.direction = :down if y > ROOF_Y
+    self.direction = :up if y < Game::FLOOR_Y
+    if y > ROOF_Y
+      self.direction = :down
+      self.x         = 50 + rand(1130)
+      self.facing    = rand < 0.5 ? :right : :left
+    end
+  end
+
+  def score_value(score_seconds)
+    (speed * (1.0 + score_seconds / 45.0)).ceil
   end
 
   def slow!(multiplier)

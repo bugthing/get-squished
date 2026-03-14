@@ -66,6 +66,7 @@ class Game
     state.shake_frames     = 0
     state.balloon_count    = 3
     state.balloon_refill_timer = 0
+    state.score                = 0
     audio[:music] = { input: "sounds/music.ogg", looping: true } if file_exists?("sounds/music.ogg")
   end
 
@@ -76,6 +77,7 @@ class Game
     advance_particles
     check_balloon_refill
     state.shake_frames -= 1 if state.shake_frames > 0
+    state.score += 1
     end_game if player.dead
   end
 
@@ -86,7 +88,7 @@ class Game
     render_background
     feet.each_foot do |foot|
       leg_w = 32
-      leg_x = foot.x + (foot.facing == :left ? 1 : 62)
+      leg_x = foot.x + (foot.facing == :left ? 1 : 64)
       leg_y = foot.y + foot.h - 20
       leg_h = [720 - leg_y, 0].max
       outputs.solids << { x: leg_x + sx, y: leg_y + sy, w: leg_w, h: leg_h, r: 240, g: 185, b: 145 }
@@ -122,8 +124,10 @@ class Game
   end
 
   def render_hud
-    outputs.labels << { x: 20, y: 710, text: "#{score_seconds}s",
+    outputs.labels << { x: 20, y: 710, text: "#{state.score}",
                         size_enum: 4, r: 255, g: 255, b: 255 }
+    outputs.labels << { x: 20, y: 685, text: "#{score_seconds}s",
+                        size_enum: 1, r: 200, g: 200, b: 200 }
     3.times do |i|
       x = 1220 - (i * 35)
       if i < (state.balloon_count || 0)
@@ -138,7 +142,7 @@ class Game
 
   def end_game
     state.game_state  = :game_over
-    state.final_score = score_seconds
+    state.final_score = state.score
     audio.delete(:music)
     outputs.sounds << "sounds/game_over.wav" if file_exists?("sounds/game_over.wav")
     if state.final_score > (state.high_score || 0)
@@ -157,7 +161,7 @@ class Game
     outputs.solids << { x: 0, y: 0, w: 1280, h: 720, r: 20, g: 10, b: 10 }
     outputs.labels << { x: 640, y: 580, text: "SQUISHED!", size_enum: 12,
                         alignment_enum: 1, r: 255, g: 60, b: 60 }
-    outputs.labels << { x: 640, y: 480, text: "You survived #{state.final_score}s",
+    outputs.labels << { x: 640, y: 480, text: "Score: #{state.final_score}",
                         size_enum: 4, alignment_enum: 1, r: 220, g: 180, b: 180 }
     outputs.labels << { x: 640, y: 430, text: "Best: #{state.high_score}s",
                         size_enum: 4, alignment_enum: 1, r: 220, g: 180, b: 180 }
@@ -202,6 +206,7 @@ class Game
         next if hit
         if foot.entity.intersect_rect?(balloon)
           foot.slow!(slow_multiplier)
+          state.score += foot.score_value(score_seconds) * 100
           spawn_splash_particles(balloon[:x] + 10, balloon[:y] + 14)
           outputs.sounds << "sounds/splat.wav" if file_exists?("sounds/splat.wav")
           hit = true
