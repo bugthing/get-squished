@@ -90,7 +90,7 @@ class Game
     render_background
     feet.each_foot do |foot|
       leg_w = 32
-      leg_x = foot.x + (foot.facing == :left ? 1 : 64)
+      leg_x = foot.x + (foot.facing == :left ? 1 : 65)
       leg_y = foot.y + foot.h - 20
       leg_h = [720 - leg_y, 0].max
       outputs.solids << { x: leg_x + sx, y: leg_y + sy, w: leg_w, h: leg_h, r: 240, g: 185, b: 145 }
